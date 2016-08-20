@@ -4,10 +4,13 @@ import numpy as np
 import pyqtgraph as pg
 import qdarkstyle
 from distributions import normal, chisquare, poisson, exponential, binomial, beta
+
+
 """
  TO DO: 
         - Demo plots with multiple variables (Beta):
                 - zip through values of demo_parameters dict
+        - Discrete sliders need integer values for n    
         - Update other distributions... DRY
         - Add cdf functionality
         - Add reset button (easy, same as clicking on left button)

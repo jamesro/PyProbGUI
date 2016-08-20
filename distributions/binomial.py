@@ -3,9 +3,9 @@ import numpy as np
 import pyqtgraph as pg
 from .distributions import distribution, parameter
 
-
+n = 25
 class binomial(distribution):
-    n = 25
+    
     def __init__(self): 
         distribution.__init__(self,name = "Binomial",
                         plot_title = "Binomial Distribution",

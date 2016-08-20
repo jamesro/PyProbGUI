@@ -1,6 +1,15 @@
 import numpy as np
 import pyqtgraph as pg
 
+greeks = {  'alpha' : u'\u03B1',
+            'beta' : u'\u03B2',
+            'mu' : u'\u03BC',
+            'nu' : u'\u03BD',
+            'sigma' : u'\u03C3',
+            'lambda' : u'\u03BB',
+            'n' : 'n',
+            'p' : 'p',
+            'k' : 'k'}
 
 class distribution:
 
@@ -24,7 +33,7 @@ class distribution:
         for param, values in params.items():
             n_plots = len(values) # Dangerous, always require the same amount
             for i in range(n_plots):
-                name = "{sym} = {val}  ".format(sym=param,val=values[i])
+                name = "{sym} = {val:.2f}".format(sym=param,val=values[i])
         
         
                 if self.continuous:
@@ -56,7 +65,7 @@ class distribution:
         self.clear_plot(plotWidget)
         name = ""
         for param_name, obj in self.parameters.items():
-            name += "{sym} = {val}  ".format(sym=param_name,val=obj.value)
+            name += "{sym} = {val:.2f}  ".format(sym=param_name,val=obj.value)
 
         if self.continuous:
             self.update_xrange()
@@ -68,7 +77,7 @@ class distribution:
             self.update_xrange()
             dist = self.get_distribution()
             plotWidget.plot(self.x_range, dist.pmf(self.x_range), fillLevel=0,
-                            fillBrush=(255,255,255,5), name=".")
+                            fillBrush=(255,255,255,5), name=name)
                         
             bg = pg.BarGraphItem(x=self.x_range, height=dist.pmf(self.x_range),
                                 width=0.05, fillLevel = 30)
