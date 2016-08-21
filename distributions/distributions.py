@@ -33,21 +33,16 @@ class distribution:
         for param, values in params.items():
             n_plots = len(values) # Dangerous, always require the same amount
             for i in range(n_plots):
-                name = "{sym} = {val:.2f}".format(sym=param,val=values[i])
-        
+                name = "{sym} = {val:.2f}".format(sym=greeks[param],val=values[i])
         
                 if self.continuous:
-            
                     self.parameters[param].value = values[i]
                     self.update_xrange()
                     dist = self.get_distribution()
                     plotWidget.plot(self.x_range, dist.pdf(self.x_range), fillLevel=0, 
                                     fillBrush=(255,255,255,30), pen=(i,n_plots), 
                                     name=name)
-
-        
-                else:
-                    
+                else:                    
                     self.parameters[param].value = values[i]
                     self.update_xrange()
                     dist = self.get_distribution()
@@ -58,14 +53,14 @@ class distribution:
                     
                     bg = pg.BarGraphItem(x=self.x_range, height=dist.pmf(self.x_range),
                                         width=0.05, pen=(i,n_plots), fillLevel = 30)
-
                     plotWidget.addItem(bg)
+
 
     def draw(self,plotWidget):
         self.clear_plot(plotWidget)
         name = ""
         for param_name, obj in self.parameters.items():
-            name += "{sym} = {val:.2f}  ".format(sym=param_name,val=obj.value)
+            name += "{sym} = {val:.2f}  ".format(sym=greeks[param_name],val=obj.value)
 
         if self.continuous:
             self.update_xrange()
@@ -84,7 +79,16 @@ class distribution:
 
             plotWidget.addItem(bg)
 
+    def cdf(self,x):
+        pass
 
+    def sf(self,x):
+        # Same as 1 - cdf but sometimes more accurate
+        pass
+
+    def pmf(self,x):
+        # For discrete distributions only
+        pass
     def get_distribution(self):
         pass
 
@@ -93,11 +97,11 @@ class distribution:
 
 class parameter:
 
-    def __init__(self, init_value, minimum, maximum):
+    def __init__(self, init_value, minimum, maximum, continuous=True):
         self.value = init_value
         self.minimum = minimum
         self.maximum = maximum
-
+        self.continuous = continuous
 
 
 

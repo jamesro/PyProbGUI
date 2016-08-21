@@ -10,7 +10,7 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
  TO DO: 
         - Demo plots with multiple variables (Beta):
                 - zip through values of demo_parameters dict
-        - Discrete sliders need integer values for n    
+        - Discrete sliders need integer values for n    ---> DONE
         - Update other distributions... DRY
         - Add cdf functionality
         - Add reset button (easy, same as clicking on left button)
@@ -70,7 +70,10 @@ class Window(QtGui.QMainWindow):
     
 
     def home(self):
-        self.plotWidget = pg.PlotWidget(labels = {'left': "f(x)", 'bottom': "x"})
+        self.active_distribution = None
+
+        self.plotWidget = pg.PlotWidget(labels = {'left': "f(x)",
+                                                  'bottom': "x"})
         self.plotWidget.addLegend(offset=(-10,1))
        
         # Left side (distributions)
@@ -97,9 +100,32 @@ class Window(QtGui.QMainWindow):
         self.text_box = QtGui.QTextEdit()
         self.text_box.setReadOnly(True)
 
+        # Combo box for continuous variables
+        self.cdf_cont_combo_box = QtGui.QComboBox()
+        self.cdf_cont_combo_box.addItem("P(X < x)")
+        self.cdf_cont_combo_box.addItem("P(X > x)")
+        self.cdf_cont_combo_box.addItem("2P(X > x)")
+        # Combo box for discrete variables
+        self.cdf_disc_combo_box = QtGui.QComboBox()
+        self.cdf_disc_combo_box.addItem("P(X < x)")
+        self.cdf_disc_combo_box.addItem("P(X > x)")
+        self.cdf_disc_combo_box.addItem("P(X = x)")
+        # "x = " box
+        self.x_input = QtGui.QLineEdit() 
+        self.x_input.setPlaceholderText("x = ")
+        self.x_input.returnPressed.connect(self.calculate)
+        # self.x_input.setGeometry(1,2,3,4)
+        self.answer_box = QtGui.QLineEdit()
+        self.answer_box.setReadOnly(True)
+        self.title = QtGui.QLineEdit()
+        self.title.setReadOnly(True)
+        f = self.title.font()
+        f.setPointSize(27)
+        self.title.setFont(f)
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
 
         # ---------------------------------------------------------
-        #| Layout                                                  |
+        #|              Layout                                     |
         # ---------------------------------------------------------
 
         #Buttons left of plot
@@ -109,18 +135,29 @@ class Window(QtGui.QMainWindow):
 
         #Parameters right of plot
         sliders_right = QtGui.QVBoxLayout()
-        sliders_right.addStretch()
+        # sliders_right.addStretch()
         for i, ps in self.parameter_sliders.items():
             for j, slider in ps.items():
                 sliders_right.addWidget(slider)
 
+        #Combo boxes (one always invisible)
+        combo_boxes = QtGui.QVBoxLayout()
+        combo_boxes.addWidget(self.cdf_cont_combo_box)
+        combo_boxes.addWidget(self.cdf_disc_combo_box)
+        #CDF calculator
+        cdf_calc = QtGui.QHBoxLayout()
+        cdf_calc.addLayout(combo_boxes)
+        cdf_calc.addWidget(self.x_input)
+
         #Stack textbox and sliders
         right_stack = QtGui.QVBoxLayout()
-        right_stack.addStretch()
-        
+        right_stack.addWidget(self.title)
+        # right_stack.addStretch()
         right_stack.addWidget(self.text_box)
         right_stack.addLayout(sliders_right)
-
+        right_stack.addLayout(cdf_calc)
+        right_stack.addWidget(self.answer_box)
+        
         #Aligning left buttons, plot and parameters
         outer_box = QtGui.QHBoxLayout()
         outer_box.addLayout(buttons_left)
@@ -139,6 +176,30 @@ class Window(QtGui.QMainWindow):
 
         self.show()
 
+
+    def calculate(self):
+
+        if self.active_distribution.continuous:
+            question = self.cdf_cont_combo_box.currentText()
+        else:
+            question = self.cdf_disc_combo_box.currentText()
+        
+        try:
+            x = float(self.x_input.text())
+        except Exception:
+            return None
+
+        if '<' in question:
+            answer = self.active_distribution.sf(x)
+        elif '>' in question:
+            answer = (2 - ('2' not in question)) * self.active_distribution.cdf(x) # Ha! 
+        elif '=' in question:
+            answer = self.active_distribution.pmf(x)
+        else:
+            raise ValueError('Combo box did something unexpected')
+
+        self.answer_box.setText(str(answer))
+
     # ---------------------------------------------------------
     #| Factory Functions                                       |
     # ---------------------------------------------------------
@@ -152,34 +213,43 @@ class Window(QtGui.QMainWindow):
                     else:
                         slider.hide()
             
-            dist_obj = distribs[id]
-            # Plot the distribution
-            dist_obj.draw_demo(plotWidget=self.plotWidget,params=dist_obj.demo_params)
-            
+            self.active_distribution = distribs[id]
+            # Get the right combo box
+            if self.active_distribution.continuous:
+                self.cdf_disc_combo_box.hide()
+                self.cdf_cont_combo_box.show()
+            else:
+                self.cdf_cont_combo_box.hide()
+                self.cdf_disc_combo_box.show()
+
+            # Plot the distribution and update wiki text
+            self.active_distribution.draw_demo(plotWidget=self.plotWidget,params=self.active_distribution.demo_params)
+            self.title.setText(self.active_distribution.name)
+            self.text_box.setText(self.active_distribution.wiki_text)
             QtGui.QApplication.processEvents() # Needed on mac for some reason
-            
-            self.text_box.setText(dist_obj.wiki_text)
-        
         return change_plot
 
     def make_parameter_changers(self, id, parameter):
         def change_parameter():
             # Update value
             slider_value = self.parameter_sliders[id][parameter].slider.value()
-            dist_obj = distribs[id]
+            self.active_distribution = distribs[id]
             
             # Slider scale is 0-100, so have to linearly transform it to match the parameter
             slider_min = 0
             slider_max = 100
-            param_max = dist_obj.parameters[parameter].maximum
-            param_min = dist_obj.parameters[parameter].minimum
+            param_max = self.active_distribution.parameters[parameter].maximum
+            param_min = self.active_distribution.parameters[parameter].minimum
             old_range = (slider_value - slider_min)
             new_range = (param_max - param_min)
             value = ((old_range * new_range) / (slider_max - slider_min)) + param_min
-            dist_obj.parameters[parameter].value = value
+            if not self.active_distribution.parameters[parameter].continuous:
+                self.active_distribution.parameters[parameter].value = np.round(value)
+            else:    
+                self.active_distribution.parameters[parameter].value = value
             
             # Update plot
-            dist_obj.draw(self.plotWidget)
+            self.active_distribution.draw(self.plotWidget)
             
         return change_parameter
 
