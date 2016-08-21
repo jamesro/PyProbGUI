@@ -16,11 +16,11 @@ class exponential(distribution):
     def get_distribution(self):
         return expon(scale = (1.0/self.parameters['lambda'].value))
 
-    def cdf(self,x):
-        return self.get_distribution().cdf(x = x)
+    # def cdf(self,x):
+    #     return self.get_distribution().cdf(x = x)
 
-    def sf(self,x):
-        # Same as 1 - cdf but sometimes more accurate
-        return self.get_distribution().sf(x = x)
+    # def sf(self,x):
+    #     # Same as 1 - cdf but sometimes more accurate
+    #     return self.get_distribution().sf(x = x)
 
 

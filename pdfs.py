@@ -14,6 +14,7 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
         - Update other distributions... DRY
         - Add cdf functionality
         - Add reset button (easy, same as clicking on left button)
+        - Stop right panel from stretching, prefer the plot to stretch
         
  """
 
@@ -119,15 +120,35 @@ class Window(QtGui.QMainWindow):
         self.answer_box.setReadOnly(True)
         self.title = QtGui.QLineEdit()
         self.title.setReadOnly(True)
+        
         f = self.title.font()
         f.setPointSize(27)
         self.title.setFont(f)
         self.title.setAlignment(QtCore.Qt.AlignCenter)
 
-        # ---------------------------------------------------------
-        #|              Layout                                     |
-        # ---------------------------------------------------------
+        self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 
+        # sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
+        # # sizePolicy.setHorizontalStretch(0)
+        # # sizePolicy.setVerticalStretch(0)
+        # # sizePolicy.setHeightForWidth(self.title.sizePolicy().hasHeightForWidth())
+        # sizePolicy.setHeightForWidth(False)
+        # self.title.setSizePolicy(sizePolicy)
+        # self.text_box.setSizePolicy(sizePolicy)
+        # self.cdf_disc_combo_box.setSizePolicy(sizePolicy)
+        # self.cdf_cont_combo_box.setSizePolicy(sizePolicy)
+        # self.x_input.setSizePolicy(sizePolicy)
+        # self.answer_box.setSizePolicy(sizePolicy)        
+
+
+        """
+        ██╗      █████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗
+        ██║     ██╔══██╗╚██╗ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝
+        ██║     ███████║ ╚████╔╝ ██║   ██║██║   ██║   ██║   
+        ██║     ██╔══██║  ╚██╔╝  ██║   ██║██║   ██║   ██║   
+        ███████╗██║  ██║   ██║   ╚██████╔╝╚██████╔╝   ██║   
+        ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝  ╚═════╝    ╚═╝   
+        """
         #Buttons left of plot
         buttons_left = QtGui.QVBoxLayout()
         for i, button in buttons.items():
@@ -135,9 +156,9 @@ class Window(QtGui.QMainWindow):
 
         #Parameters right of plot
         sliders_right = QtGui.QVBoxLayout()
-        # sliders_right.addStretch()
         for i, ps in self.parameter_sliders.items():
             for j, slider in ps.items():
+                # slider.setSizePolicy(sizePolicy)
                 sliders_right.addWidget(slider)
 
         #Combo boxes (one always invisible)
@@ -152,17 +173,19 @@ class Window(QtGui.QMainWindow):
         #Stack textbox and sliders
         right_stack = QtGui.QVBoxLayout()
         right_stack.addWidget(self.title)
-        # right_stack.addStretch()
         right_stack.addWidget(self.text_box)
         right_stack.addLayout(sliders_right)
         right_stack.addLayout(cdf_calc)
         right_stack.addWidget(self.answer_box)
+    
         
         #Aligning left buttons, plot and parameters
         outer_box = QtGui.QHBoxLayout()
+        # outer_box.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         outer_box.addLayout(buttons_left)
         outer_box.addWidget(self.plotWidget)
         outer_box.addLayout(right_stack)
+
 
         # central widget
         self.centralWidget = QtGui.QWidget()
@@ -176,7 +199,21 @@ class Window(QtGui.QMainWindow):
 
         self.show()
 
-
+    """
+    ██████╗ ██╗   ██╗████████╗████████╗ ██████╗ ███╗   ██╗                    
+    ██╔══██╗██║   ██║╚══██╔══╝╚══██╔══╝██╔═══██╗████╗  ██║                    
+    ██████╔╝██║   ██║   ██║      ██║   ██║   ██║██╔██╗ ██║                    
+    ██╔══██╗██║   ██║   ██║      ██║   ██║   ██║██║╚██╗██║                    
+    ██████╔╝╚██████╔╝   ██║      ██║   ╚██████╔╝██║ ╚████║                    
+    ╚═════╝  ╚═════╝    ╚═╝      ╚═╝    ╚═════╝ ╚═╝  ╚═══╝                    
+                                                                              
+    ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
+    ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+    █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
+    ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
+    ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
+    ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+    """
     def calculate(self):
 
         if self.active_distribution.continuous:
@@ -200,11 +237,25 @@ class Window(QtGui.QMainWindow):
 
         self.answer_box.setText(str(answer))
 
-    # ---------------------------------------------------------
-    #| Factory Functions                                       |
-    # ---------------------------------------------------------
+    """
+    ███████╗ █████╗  ██████╗████████╗ ██████╗ ██████╗ ██╗   ██╗               
+    ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝               
+    █████╗  ███████║██║        ██║   ██║   ██║██████╔╝ ╚████╔╝                
+    ██╔══╝  ██╔══██║██║        ██║   ██║   ██║██╔══██╗  ╚██╔╝                 
+    ██║     ██║  ██║╚██████╗   ██║   ╚██████╔╝██║  ██║   ██║                  
+    ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝                  
+                                                                              
+    ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
+    ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+    █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
+    ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
+    ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
+    ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+    """
     def make_plot_changers(self,id):
         def change_plot():
+            self.x_input.clear()
+            self.answer_box.clear()
             # Show only relevant sliders
             for i, ps in self.parameter_sliders.items():
                 for j, slider in ps.items():
@@ -253,10 +304,23 @@ class Window(QtGui.QMainWindow):
             
         return change_parameter
 
-            
 
 
-
+"""
+ ██████╗██╗   ██╗███████╗████████╗ ██████╗ ███╗   ███╗ 
+██╔════╝██║   ██║██╔════╝╚══██╔══╝██╔═══██╗████╗ ████║ 
+██║     ██║   ██║███████╗   ██║   ██║   ██║██╔████╔██║ 
+██║     ██║   ██║╚════██║   ██║   ██║   ██║██║╚██╔╝██║ 
+╚██████╗╚██████╔╝███████║   ██║   ╚██████╔╝██║ ╚═╝ ██║ 
+ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝ 
+                                                       
+██╗    ██╗██╗██████╗  ██████╗ ███████╗████████╗███████╗
+██║    ██║██║██╔══██╗██╔════╝ ██╔════╝╚══██╔══╝██╔════╝
+██║ █╗ ██║██║██║  ██║██║  ███╗█████╗     ██║   ███████╗
+██║███╗██║██║██║  ██║██║   ██║██╔══╝     ██║   ╚════██║
+╚███╔███╔╝██║██████╔╝╚██████╔╝███████╗   ██║   ███████║
+ ╚══╝╚══╝ ╚═╝╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝
+"""
 class SliderWithLabel(QtGui.QWidget): 
     def __init__(self, *var, **kw): 
         QtGui.QWidget.__init__(self, *var, **kw) 
@@ -267,9 +331,6 @@ class SliderWithLabel(QtGui.QWidget):
         layout.addWidget(self.label) 
         layout.addWidget(self.slider) 
         self.setLayout(layout) 
-
-       
-
 
 
 
