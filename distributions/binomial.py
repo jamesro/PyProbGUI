@@ -23,13 +23,14 @@ class binomial(distribution):
         self.x_range = np.arange(0, self.parameters['n'].value)
 
 
-    def cdf(self,x):
-        return self.get_distribution().cdf(x=x)
+    # def cdf(self,x):
+    #     return self.get_distribution().cdf(x=x)
 
-    def sf(self,x):
-        # Same as 1 - cdf but sometimes more accurate
-        return self.get_distribution().sf(x=x)
+    # def sf(self,x):
+    #     # Same as 1 - cdf but sometimes more accurate
+    #     return self.get_distribution().sf(x=x)
 
     def pmf(self,x):
         # For discrete distributions only
-        return self.get_distribution().pmf(x=x)
+        print(self.get_distribution())
+        return self.get_distribution().pmf(x)

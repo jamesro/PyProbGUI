@@ -80,15 +80,16 @@ class distribution:
             plotWidget.addItem(bg)
 
     def cdf(self,x):
-        pass
+        return self.get_distribution().cdf(x)
 
     def sf(self,x):
         # Same as 1 - cdf but sometimes more accurate
-        pass
+        return self.get_distribution().sf(x)
 
     def pmf(self,x):
-        # For discrete distributions only
-        pass
+        assert(self.continuous == False)         # For discrete distributions only
+        return self.get_distribution().pmf(x)
+        
     def get_distribution(self):
         pass
 

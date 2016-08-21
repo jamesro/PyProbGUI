@@ -14,7 +14,7 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
         - Update other distributions... DRY
         - Add cdf functionality
         - Add reset button (easy, same as clicking on left button)
-        - Stop right panel from stretching, prefer the plot to stretch
+        - Stop right panel from stretching, prefer the plot to stretch --> DONE (finally...)
         
  """
 
@@ -125,20 +125,7 @@ class Window(QtGui.QMainWindow):
         f.setPointSize(27)
         self.title.setFont(f)
         self.title.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-
-        # sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
-        # # sizePolicy.setHorizontalStretch(0)
-        # # sizePolicy.setVerticalStretch(0)
-        # # sizePolicy.setHeightForWidth(self.title.sizePolicy().hasHeightForWidth())
-        # sizePolicy.setHeightForWidth(False)
-        # self.title.setSizePolicy(sizePolicy)
-        # self.text_box.setSizePolicy(sizePolicy)
-        # self.cdf_disc_combo_box.setSizePolicy(sizePolicy)
-        # self.cdf_cont_combo_box.setSizePolicy(sizePolicy)
-        # self.x_input.setSizePolicy(sizePolicy)
-        # self.answer_box.setSizePolicy(sizePolicy)        
+ 
 
 
         """
@@ -180,12 +167,16 @@ class Window(QtGui.QMainWindow):
     
         
         #Aligning left buttons, plot and parameters
-        outer_box = QtGui.QHBoxLayout()
-        # outer_box.setSizeConstraint(QtGui.QLayout.SetFixedSize)
-        outer_box.addLayout(buttons_left)
-        outer_box.addWidget(self.plotWidget)
-        outer_box.addLayout(right_stack)
+        # outer_box = QtGui.QHBoxLayout()
+        # outer_box.addLayout(buttons_left)
+        # outer_box.addWidget(self.plotWidget)
+        # outer_box.addLayout(right_stack)
 
+        outer_box = QtGui.QGridLayout()
+        outer_box.addLayout(buttons_left,0,0)
+        outer_box.addWidget(self.plotWidget,0,1)
+        outer_box.addLayout(right_stack,0,2)
+        outer_box.setColumnStretch(1,3)
 
         # central widget
         self.centralWidget = QtGui.QWidget()
