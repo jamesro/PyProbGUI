@@ -15,12 +15,15 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
         - Add cdf functionality
         - Add reset button (easy, same as clicking on left button)
         - Stop right panel from stretching, prefer the plot to stretch --> DONE (finally...)
+        - calculations not working for normal distribution
         
  """
 
 
 distribs =  {1 : binomial.binomial(),
-             2 : exponential.exponential()}
+             2 : exponential.exponential(),
+             3 : chisquare.chi_square(),
+             4 : normal.normal()}
             # 3 : poisson.poisson_d()}
 # distribs = {1 : normal.normal(),
 #             2 : chisquare.chi_square(),
