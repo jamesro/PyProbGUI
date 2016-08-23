@@ -16,6 +16,7 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
         - Add reset button (easy, same as clicking on left button)
         - Stop right panel from stretching, prefer the plot to stretch --> DONE (finally...)
         - calculations not working for normal distribution
+        - Add shading functionality for CDFs (should be easy...)
         
  """
 
