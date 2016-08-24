@@ -24,8 +24,8 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
 distribs =  {1 : binomial.binomial(),
              2 : exponential.exponential(),
              3 : chisquare.chi_square(),
-             4 : normal.normal()}
-            # 3 : poisson.poisson_d()}
+             4 : normal.normal(),
+             5 : poisson.poisson_d()}
 # distribs = {1 : normal.normal(),
 #             2 : chisquare.chi_square(),
 #             3 : poisson.poisson_d(),
