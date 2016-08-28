@@ -9,13 +9,9 @@ from distributions import normal, chisquare, poisson, exponential, binomial, bet
 """
  TO DO: 
         - Demo plots with multiple variables (Beta):
-                - zip through values of demo_parameters dict
-        - Discrete sliders need integer values for n    ---> DONE
+                - zip through values of demo_parameters dictionaries
         - Update other distributions... DRY
-        - Add cdf functionality
-        - Add reset button (easy, same as clicking on left button)
-        - Stop right panel from stretching, prefer the plot to stretch --> DONE (finally...)
-        - calculations not working for normal distribution
+        - calculations not working for normal & poisson (P(X<x) backwards???)
         - Add shading functionality for CDFs (should be easy...)
         
  """
